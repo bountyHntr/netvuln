@@ -1,0 +1,123 @@
+{
+  "results": [
+    {
+      "target": "45.33.32.156",
+      "services": [
+        {
+          "name": "tcpwrapped",
+          "tcp_port": 53
+        },
+        {
+          "name": "http",
+          "version": "2.4.7",
+          "tcp_port": 80,
+          "vulns": [
+            {
+              "identifier": "PACKETSTORM:171631",
+              "cvss_score": 7.5
+            },
+            {
+              "identifier": "EDB-ID:51193",
+              "cvss_score": 7.5
+            },
+            {
+              "identifier": "5C1BB960-90C1-5EBF-9BEF-F58BFFDFEED9",
+              "cvss_score": 7.5
+            },
+            {
+              "identifier": "1337DAY-ID-38427",
+              "cvss_score": 7.5
+            },
+            {
+              "identifier": "PACKETSTORM:127546",
+              "cvss_score": 6.8
+            },
+            {
+              "identifier": "FDF3DFA1-ED74-5EE2-BF5C-BA752CA34AE8",
+              "cvss_score": 6.8
+            },
+            {
+              "identifier": "8AFB43C5-ABD4-52AD-BB19-24D7884FF2A2",
+              "cvss_score": 6.8
+            },
+            {
+              "identifier": "4810E2D9-AC5F-5B08-BFB3-DDAFA2F63332",
+              "cvss_score": 6.8
+            },
+            {
+              "identifier": "4373C92A-2755-5538-9C91-0469C995AA9B",
+              "cvss_score": 6.8
+            },
+            {
+              "identifier": "1337DAY-ID-22451",
+              "cvss_score": 6.8
+            },
+            {
+              "identifier": "0095E929-7573-5E4A-A7FA-F6598A35E8DE",
+              "cvss_score": 6.8
+            },
+            {
+              "identifier": "1337DAY-ID-33577",
+              "cvss_score": 5.8
+            },
+            {
+              "identifier": "SSV:96537",
+              "cvss_score": 5
+            },
+            {
+              "identifier": "SSV:62058",
+              "cvss_score": 5
+            },
+            {
+              "identifier": "SSV:61874",
+              "cvss_score": 5
+            },
+            {
+              "identifier": "EXPLOITPACK:DAED9B9E8D259B28BF72FC7FDC4755A7",
+              "cvss_score": 5
+            },
+            {
+              "identifier": "EXPLOITPACK:C8C256BE0BFF5FE1C0405CB0AA9C075D",
+              "cvss_score": 5
+            },
+            {
+              "identifier": "EDB-ID:42745",
+              "cvss_score": 5
+            },
+            {
+              "identifier": "EDB-ID:40961",
+              "cvss_score": 5
+            },
+            {
+              "identifier": "1337DAY-ID-28573",
+              "cvss_score": 5
+            },
+            {
+              "identifier": "1337DAY-ID-26574",
+              "cvss_score": 5
+            },
+            {
+              "identifier": "SSV:87152",
+              "cvss_score": 4.3
+            },
+            {
+              "identifier": "PACKETSTORM:127563",
+              "cvss_score": 4.3
+            },
+            {
+              "identifier": "4013EC74-B3C1-5D95-938A-54197A58586D",
+              "cvss_score": 4.3
+            },
+            {
+              "identifier": "1337DAY-ID-33575",
+              "cvss_score": 4.3
+            },
+            {
+              "identifier": "PACKETSTORM:140265"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

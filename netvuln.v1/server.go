@@ -2,12 +2,13 @@ package netvuln_v1
 
 import (
 	"context"
-	"log"
 	"os/exec"
 	"strconv"
 
 	"github.com/Ullaakut/nmap/v3"
 	"github.com/pkg/errors"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type NetVulnServer struct {
@@ -60,7 +61,7 @@ func (s *NetVulnServer) newScanner(ctx context.Context, targets []string, tcpPor
 func runScanner(scanner *nmap.Scanner) (*nmap.Run, error) {
 	result, warnings, err := scanner.Run()
 	if len(*warnings) > 0 {
-		log.Printf("nmap run finished with warnings: %s\n", *warnings)
+		log.Warn("nmap run finished with warnings:", *warnings)
 	}
 
 	return result, err
@@ -145,16 +146,34 @@ func parseVulnersScriptResponse(script *nmap.Script) ([]*Vulnerability, error) {
 	return vulns, nil
 }
 
+var ErrParseVulners = errors.New("internal error: failed to parse vulner element")
+
 func parseVulnersElement(elements []nmap.Element) (vulnersElement, error) {
 	vElement := vulnersElement{}
 
+	isInvalid := true
+
 	for _, el := range elements {
-		if el.Key == "is_exploit" && el.Value == "false" {
-			return vElement, nil
+		if el.Key != "is_exploit" {
+			continue
+		}
+
+		isInvalid = false
+
+		if el.Value == "true" {
+			vElement.isExploit = true
+			break
 		}
 	}
 
-	vElement.isExploit = true
+	if isInvalid {
+		log.Error("failed to parse vulners elements: missing element with key 'is_exploit'")
+		return vElement, ErrParseVulners
+	}
+
+	if !vElement.isExploit {
+		return vElement, nil
+	}
 
 	var cvssStr string
 	for _, el := range elements {
