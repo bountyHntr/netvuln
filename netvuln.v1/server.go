@@ -25,6 +25,7 @@ func NewNetVulnServer() (*NetVulnServer, error) {
 }
 
 func (s *NetVulnServer) CheckVuln(ctx context.Context, in *CheckVulnRequest) (*CheckVulnResponse, error) {
+	log.Debugf("new request: %+v", in)
 
 	scanner, err := s.newScanner(ctx, in.Targets, in.TcpPorts)
 	if err != nil {
