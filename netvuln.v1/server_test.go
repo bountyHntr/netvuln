@@ -178,6 +178,12 @@ func TestParseVulnersScriptResponse(t *testing.T) {
 	}
 }
 
+// in order to speed up testing and prevent breakage of the test in case of a change in the state of the host,
+// the result of the nmap scanner and the expected correct output were saved to files
+// "tests_data/nmap_run.json" and "tests_data/server_response.json", respectively
+//
+// this data corresponds to the execution of the following command at the time of writing the test:
+// nmap -sV -p 53,80 --script vulners scanme.nmap.org
 const (
 	nmapRunDataPath        = "tests_data/nmap_run.json"
 	serverResponseDataPath = "tests_data/server_response.json"
@@ -199,6 +205,10 @@ func TestBuildResponse(t *testing.T) {
 		t.Error("got unexpected error:", err)
 	}
 
+	// when unmarshal objects 'expected' from json, the internal representation of the object may differ from the original due
+	// to the features of Go, and therefore the reflect.DeepEqual will give an incorrect result
+	// in order for the comparison to be carried out correctly, the result obtained 'response' must also be first
+	// marshal then unmarshal, see more details below:
 	// https://blog.gojek.io/relooking-at-golangs-reflect-deepequal/
 	data, err := json.Marshal(response)
 	if err != nil {

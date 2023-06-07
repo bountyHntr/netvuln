@@ -12,8 +12,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-var serverAddress = ":9000"
+var serverAddress = ":9000" // default server address
 
+// environment variables parsing
 func init() {
 	logLevelStr, ok := os.LookupEnv("LOG_LVL")
 	if ok {

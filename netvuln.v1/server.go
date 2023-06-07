@@ -13,10 +13,11 @@ import (
 
 type NetVulnServer struct {
 	UnimplementedNetVulnServiceServer
-	nmapPath string
+	nmapPath string // path to nmap binary
 }
 
 func NewNetVulnServer() (*NetVulnServer, error) {
+	// save the path to the nmap binary so as not to look for it on every request
 	nmapPath, err := exec.LookPath("nmap")
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to find path to nmap")
@@ -42,6 +43,8 @@ func (s *NetVulnServer) CheckVuln(ctx context.Context, in *CheckVulnRequest) (*C
 
 const scriptName = "vulners"
 
+// creates a new scanner, the use of which is equivalent to the result of the following command:
+// nmap -sV -p [tcpPorts...] --script vulners [targets...]
 func (s *NetVulnServer) newScanner(ctx context.Context, targets []string, tcpPorts []int32) (*nmap.Scanner, error) {
 
 	ports := make([]string, 0, len(tcpPorts))
@@ -101,6 +104,7 @@ func buildResponse(result *nmap.Run) (*CheckVulnResponse, error) {
 	return resp, nil
 }
 
+// returns the result of the 'vulners' script or nil
 func filterVulnersScript(scripts []nmap.Script) *nmap.Script {
 	for idx := range scripts {
 		if scripts[idx].ID != scriptName {
@@ -113,27 +117,31 @@ func filterVulnersScript(scripts []nmap.Script) *nmap.Script {
 	return nil
 }
 
+// containing the parsed elements of a row from a 'vulners' script output table
 type vulnersElement struct {
 	isExploit bool
 	id        string
 	cvss      float32
 }
 
+// parses the result of the 'vulners' script execution and returns the found list of vulnerabilities
 func parseVulnersScriptResponse(script *nmap.Script) ([]*Vulnerability, error) {
 
 	vulns := make([]*Vulnerability, 0)
 
+	// if the 'vulners' script was not applied to the current service, then script == nil
 	if script == nil || len(script.Tables) == 0 {
 		return vulns, nil
 	}
 
-	tables := script.Tables[0].Tables
+	tables := script.Tables[0].Tables // get a table containing a list of all potential vulnerabilities
 	for tableIdx := range tables {
 		parsedElement, err := parseVulnersElement(tables[tableIdx].Elements)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse vulners response")
 		}
 
+		// return only exploits
 		if !parsedElement.isExploit {
 			continue
 		}
@@ -149,9 +157,13 @@ func parseVulnersScriptResponse(script *nmap.Script) ([]*Vulnerability, error) {
 
 var ErrParseVulners = errors.New("internal error: failed to parse vulner element")
 
+// parse one "row" in the 'vulners' table that corresponds to some potential vulnerability
+// on each request, the elements have a different order, so it is necessary to search for each element by key
 func parseVulnersElement(elements []nmap.Element) (vulnersElement, error) {
 	vElement := vulnersElement{}
 
+	// if the slice "elements" does not contain an element with key "is_exploit", we consider that
+	// the row is invalid and the program has an internal error
 	isInvalid := true
 
 	for _, el := range elements {
@@ -172,6 +184,8 @@ func parseVulnersElement(elements []nmap.Element) (vulnersElement, error) {
 		return vElement, ErrParseVulners
 	}
 
+	// if the row does not contain an exploit, then do not parse "cvss", so as not to waste resources
+	// fully process only rows with exploits
 	if !vElement.isExploit {
 		return vElement, nil
 	}

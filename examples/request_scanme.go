@@ -13,8 +13,12 @@ import (
 
 const serverAddress = ":9000"
 
+// example of a client interacting with our gRPC server
+// this example corresponds to the execution of the following command:
+// nmap -sV -p 53,80 --script vulners scanme.nmap.org
 func RequestScanme() {
 	var opts []grpc.DialOption
+	// for example purposes only, do not use in production
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	conn, err := grpc.Dial(serverAddress, opts...)
