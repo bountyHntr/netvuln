@@ -22,7 +22,7 @@ func init() {
 		if err == nil {
 			log.SetLevel(logLevel)
 		} else {
-			log.Warnf("invalid LOG_LEVEL environment varibale value: %s; default level is used", logLevelStr)
+			log.Warnf("invalid LOG_LEVEL environment varibale value: %s; default `INFO` level is used", logLevelStr)
 		}
 	}
 
